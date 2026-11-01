@@ -3,21 +3,19 @@ import google.generativeai as genai
 import os
 
 # 1. 100% Free Gemini API Setup
-# The dashboard looks for a key saved on your system or falls back to an optional text input box
 api_key = os.getenv("GEMINI_API_KEY", "")
 
 st.set_page_config(
-    page_title="AI DevSecOps Pipeline Shield", 
+    page_title="AI DevSecOps & Wazuh SIEM Shield", 
     page_icon="🛡️",
     layout="wide"
 )
 
 # Title & Framework Header
-st.title("🛡️ AI-Driven DevSecOps & Compliance Guard")
-st.markdown("### Interactive Cybersecurity & Audit Simulation for Freshers")
+st.title("🛡️ AI-Driven DevSecOps & Wazuh SIEM Guard")
+st.markdown("### Interactive Cybersecurity, Compliance & Cloud-SIEM Monitoring")
 st.markdown("---")
 
-# If the key isn't found in system environment variables, allow input directly on the dashboard
 if not api_key:
     api_key = st.sidebar.text_input("🔑 Enter Gemini API Key to unlock AI Features:", type="password")
 
@@ -26,18 +24,18 @@ if api_key:
 else:
     st.sidebar.warning("⚠️ Please provide a Gemini API Key to activate the AI Explainer.")
 
-# 2. Layout Setup: Creating Tabs for the recruiter to click through
-tab_secret, tab_sast, tab_supply = st.tabs([
+# Layout Setup: Adding the 4th Tab for Wazuh SIEM
+tab_secret, tab_sast, tab_supply, tab_wazuh = st.tabs([
     "🔑 Secret Detection (Gitleaks)", 
     "🔍 Code Analysis (Semgrep)", 
-    "📦 Supply Chain Audit (Pip-Audit)"
+    "📦 Supply Chain Audit (Pip-Audit)",
+    "🚨 Security Monitoring (Wazuh SIEM)"
 ])
 
-# --- TAB 1: GITLEAKS (SECRET SCANNING) ---
+# --- TAB 1: GITLEAKS ---
 with tab_secret:
     st.subheader("🔒 Gitleaks Scanner Simulation")
     st.write("Gitleaks scans code histories to ensure secrets like passwords or AWS keys are never leaked to public repositories.")
-    
     st.info("💡 **Scenario:** A developer accidentally leaves an AWS password in `app/main.py` and pushes it.")
     
     if st.button("🚀 Run Simulated Gitleaks Check"):
@@ -47,21 +45,18 @@ with tab_secret:
         if api_key:
             with st.spinner("🧠 Gemini AI Explainer generating mitigation plan..."):
                 try:
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    model = genai.GenerativeModel('gemini-3.8-flash')
                     prompt = f"Explain this Gitleaks security error message: '{fake_error}'. Provide simple, beginner-friendly bullet points detailing what the risk is and how to fix it securely."
                     response = model.generate_content(prompt)
                     st.success("🤖 AI Security Analysis Complete:")
                     st.markdown(response.text)
                 except Exception as e:
                     st.error(f"AI Engine Error: {e}")
-        else:
-            st.warning("Please enter your API key to view the AI analysis framework.")
 
-# --- TAB 2: SEMGREP (CODE VULNERABILITIES) ---
+# --- TAB 2: SEMGREP ---
 with tab_sast:
     st.subheader("💻 Semgrep Static Code Analysis (SAST)")
     st.write("Semgrep reads your application source code to spot dangerous programming practices before your app goes live.")
-    
     st.info("💡 **Scenario:** The application takes direct, unvalidated input from a user and passes it straight into a database search.")
     
     if st.button("🚀 Run Simulated Semgrep SAST Check"):
@@ -71,21 +66,18 @@ with tab_sast:
         if api_key:
             with st.spinner("🧠 Gemini AI Explainer rewriting secure code..."):
                 try:
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    model = genai.GenerativeModel('gemini-3.8-flash')
                     prompt = f"Explain this SAST security flaw: '{fake_sast_error}'. Provide a short example showing vulnerable Python code versus secure parameterized Python code."
                     response = model.generate_content(prompt)
                     st.success("🤖 AI Security Analysis Complete:")
                     st.markdown(response.text)
                 except Exception as e:
                     st.error(f"AI Engine Error: {e}")
-        else:
-            st.warning("Please enter your API key to view the AI analysis framework.")
 
-# --- TAB 3: PIP-AUDIT (SUPPLY CHAIN SECURITY) ---
+# --- TAB 3: PIP-AUDIT ---
 with tab_supply:
     st.subheader("📦 Pip-Audit & Software Supply Chain Security")
     st.write("Scans third-party open-source libraries in your `requirements.txt` to make sure none of your external components are hacked or outdated.")
-    
     st.info("💡 **Scenario:** An old framework version is imported that contains known security exploits.")
     
     if st.button("🚀 Run Simulated Dependency Audit"):
@@ -95,12 +87,57 @@ with tab_supply:
         if api_key:
             with st.spinner("🧠 Gemini AI Explainer creating patching guide..."):
                 try:
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    model = genai.GenerativeModel('gemini-3.8-flash')
                     prompt = f"Explain this open-source package vulnerability: '{fake_dep_error}'. Detail what a CVE means in simple words and how a fresher would remediate it via requirements.txt updates."
                     response = model.generate_content(prompt)
                     st.success("🤖 AI Security Analysis Complete:")
                     st.markdown(response.text)
                 except Exception as e:
                     st.error(f"AI Engine Error: {e}")
+
+# --- NEW TAB 4: WAZUH SIEM (LIVE HOST MONITORING) ---
+with tab_wazuh:
+    st.subheader("🚨 Wazuh SIEM: Infrastructure Detection & Log Analysis")
+    st.write("Wazuh Agents sit inside cloud servers to monitor system logs, track authentication attempts, and flag File Integrity (FIM) breaches in real time.")
+    
+    col_w1, col_w2 = st.columns(2)
+    
+    with col_w1:
+        st.markdown("#### 🪵 Simulate Live Server Attacks")
+        attack_type = st.selectbox(
+            "Select an attack vector to launch against the server logs:",
+            ["SSH Brute Force Attack", "File Integrity Tampering (FIM)"]
+        )
+        trigger_wazuh = st.button("💥 Trigger Wazuh Security Agent")
+        
+    with col_w2:
+        st.markdown("#### 📊 Wazuh Manager Telemetry Alert")
+        wazuh_log = ""
+        if trigger_wazuh:
+            if attack_type == "SSH Brute Force Attack":
+                wazuh_log = "wazuh-agent-01: [Rule: 5712] [Level: 10] SSHD Brute Force attempt detected. 45 failed logins in 8 seconds from IP 192.168.43.21"
+                st.error(wazuh_log)
+            elif attack_type == "File Integrity Tampering (FIM)":
+                wazuh_log = "wazuh-agent-01: [Rule: 550] [Level: 7] Integrity checksum changed for file: /var/www/app/dashboard.py. Modification type: SHA256 mismatch."
+                st.warning(wazuh_log)
         else:
-            st.warning("Please enter your API key to view the AI analysis framework.")
+            st.info("Waiting for telemetry logs... Server Node Status: SECURE & COMPLIANT")
+            
+    if wazuh_log and api_key:
+        st.markdown("---")
+        with st.spinner("🧠 Gemini 3.8 Flash acting as Autonomous SOC Analyst..."):
+            try:
+                model = genai.GenerativeModel('gemini-3.8-flash')
+                wazuh_prompt = f"""
+                You are an elite automated Cloud SIEM Security Operations Center (SOC) Director.
+                Analyze this alert captured by our Wazuh Manager: '{wazuh_log}'.
+                Provide a professional report containing:
+                1. What exactly the attacker is attempting to do in plain words.
+                2. The severity evaluation and compliance standards affected (e.g., ISO27001 Access Control, SOC2 Auditing).
+                3. The exact Linux/Cloud CLI commands (like iptables, ufw, or configuration updates) to block the threat instantly.
+                """
+                response = model.generate_content(wazuh_prompt)
+                st.success("🤖 AI Cyber-SOC Incident Response Complete:")
+                st.markdown(response.text)
+            except Exception as e:
+                st.error(f"AI Engine Error: {e}")
